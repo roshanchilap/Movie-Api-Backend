@@ -8,6 +8,7 @@ const screenSchema = new mongoose.Schema({
     max: 4,
     min: 1,
   },
+  movie: { type: mongoose.Schema.Types.ObjectId, ref: "Movie" },
   showTime: [{ type: mongoose.Schema.Types.ObjectId, ref: "Shows" }],
 });
 

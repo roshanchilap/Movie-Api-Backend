@@ -6,7 +6,6 @@ const movieSchema = new mongoose.Schema({
   rating: { type: String, required: true },
   posterpath: { type: String, required: true },
   runtime: { type: String, required: true },
-  theatresId: [{ type: mongoose.Schema.Types.ObjectId, ref: "Theatre" }],
   date: {
     type: Date,
     default: Date.now(),

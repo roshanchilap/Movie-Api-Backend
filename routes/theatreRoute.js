@@ -2,7 +2,7 @@ const express = require("express");
 const { default: mongoose } = require("mongoose");
 const Theatre = require("../models/theatre");
 const router = express.Router();
-const toId = mongoose.Types.ObjectId;
+const Screen = require("../models/screen");
 //Adding movies to database
 router.post("/addTheatre", async (req, res) => {
   const data = new Theatre(req.body);
@@ -26,16 +26,15 @@ router.post("/addTheatre", async (req, res) => {
 
 router.get("/getTheatres", async (req, res) => {
   try {
-    console.log(
-      Theatre.findById(req.params.tid)
-        .where("screens")
-        .where("_id")
-        .equals(req.params.id)
-    );
-    const theatres = await Theatre.find().populate({
-      path: "screens",
-      populate: { path: "showTime" },
-    });
+    const theatres = await Theatre.find()
+      .populate({
+        path: "screens",
+        populate: { path: "movie" },
+      })
+      .populate({
+        path: "screens",
+        populate: { path: "showTime" },
+      });
     res.send(theatres);
   } catch (error) {
     res.send(error);
@@ -66,18 +65,20 @@ router.put("/updateTheatre/:id", async (req, res) => {
   }
 });
 
-//Getting all the movies in database
-// router.put("/getTheatre/:id", async (req, res) => {
-//   try {
-//     const movies = await Theatre.findByIdAndUpdate(
-//       { _id: req.params.id },
-//       { $push: { showId: req.body } }
-//     );
-//     res.send(movies);
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
 
+router.put("/getTheatre/:id", async (req, res) => {
+  try {
+    // await Theatre.findOne({
+    //   "screens.scid": req.body.screens,
+    // });
+    const movies = await Theatre.updateOne({
+      _id: req.params.id,
+      $push: { screens: req.body.screens },
+    });
+    res.send(movies);
+  } catch (error) {
+    res.send(error);
+  }
+});
 
 module.exports = router;

@@ -13,19 +13,13 @@ router.post("/addScreen", async (req, res) => {
   }
 });
 
-// Getting all the movies in database
-// router.get("/getMovies/:time", async (req, res) => {
-//   try {
-//     const movies = await Movie.where("runtime").equals(req.params.time);
-//     res.send(movies);
-//   } catch (error) {
-//     res.send(error);
-//   }
-// });
-
 router.get("/getScreens", async (req, res) => {
   try {
-    const screen = await Screen.find();
+    const screen = await Screen.find()
+      .populate({
+        path: "movie",
+      })
+      .populate("showTime");
     res.send(screen);
   } catch (error) {
     res.send(error);
@@ -55,19 +49,36 @@ router.put("/updateScreen/:id", async (req, res) => {
   }
 });
 
-//
+// //add theatre in movie
+// //get screen
+// router.put("/addShows/:tid", async (req, res) => {
+//   try {
+//     const result = await Screen.updateOne(
+//       { tid: req.params.tid },
+//       { $push: { showTime: req.body.showTime } }
+//     );
+//     console.log(result);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
 
-//add theatre in movie
-//get screen
-router.put("/addShows/:tid", async (req, res) => {
+//add shows in screens
+router.put("/addShow/:scid", async (req, res) => {
   try {
-    const result = await Screen.updateOne(
-      { tid: req.params.tid },
-      { $push: { showTime: req.body.showTime } }
+    const movies = await Screen.updateOne(
+      {
+        scid: req.params.scid,
+      },
+      {
+        $push: { showTime: req.body.showTime },
+      }
     );
-    console.log(result);
+
+    res.send(movies);
   } catch (error) {
-    console.log(error);
+    res.send(error);
   }
 });
+
 module.exports = router;
